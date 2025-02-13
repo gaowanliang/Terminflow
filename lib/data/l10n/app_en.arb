@@ -31,5 +31,7 @@
     "createNewPK": "Create new",
     "fileSizeIsTooLarge": "File size is too large",
     "usePrivateKey": "Use private key",
-    "noHosts": "No hosts"
+    "noHosts": "No hosts",
+    "edit": "Edit",
+    "delete": "Delete"
 }

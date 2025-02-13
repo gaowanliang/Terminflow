@@ -1,4 +1,3 @@
-
 import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -10,7 +9,8 @@ import 'components/basic_information_card.dart';
 import 'components/ssh_information_card.dart';
 
 class NewHostScreen extends ConsumerStatefulWidget {
-  const NewHostScreen({super.key});
+  final HostInfo? hostInfo;
+  const NewHostScreen(this.hostInfo, {super.key});
 
   @override
   ConsumerState<NewHostScreen> createState() => _NewHostScreenState();
@@ -26,6 +26,24 @@ class _NewHostScreenState extends ConsumerState<NewHostScreen> {
   final _tagController = TextEditingController();
   var usePrivateKey = ValueNotifier<int?>(null);
   final privateKeyInfo = ValueNotifier<PrivateKey?>(null);
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.hostInfo != null) {
+      _nameController.text = widget.hostInfo!.name;
+      _hostController.text = widget.hostInfo!.host;
+      _portController.text = widget.hostInfo!.port.toString();
+      _usernameController.text = widget.hostInfo!.username;
+      if (widget.hostInfo?.comment != null) {
+        _commentController.text = widget.hostInfo!.comment!;
+      }
+
+      _tagController.text = widget.hostInfo!.tagNum.toString();
+      usePrivateKey.value = widget.hostInfo!.passwordType == 1 ? 1 : null;
+      privateKeyInfo.value = widget.hostInfo!.privateKey;
+    }
+  }
 
   @override
   void dispose() {

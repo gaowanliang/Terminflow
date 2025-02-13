@@ -31,5 +31,7 @@
     "createNewPK": "新建私钥",
     "fileSizeIsTooLarge": "文件大小过大",
     "usePrivateKey": "使用私钥",
-    "noHosts": "没有主机"
+    "noHosts": "没有主机",
+    "edit": "编辑",
+    "delete": "删除"
 }

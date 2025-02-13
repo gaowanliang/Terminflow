@@ -26,6 +26,32 @@ class _SSHTabBarState extends ConsumerState<SSHTabBar>
   @override
   bool get wantKeepAlive => true;
 
+  void _handleTabClose(SSHTab tab) {
+    final currentTabId = widget.tabs[_currentIndex].id;
+    final closingTabIndex = widget.tabs.indexWhere((t) => t.id == tab.id);
+
+    // 如果关闭的是当前标签，先更新索引
+    if (tab.id == currentTabId) {
+      setState(() {
+        // 如果关闭的是最后一个标签，选中前一个
+        if (closingTabIndex == widget.tabs.length - 1) {
+          _currentIndex = closingTabIndex - 1;
+        } else {
+          // 否则选中下一个标签
+          _currentIndex = closingTabIndex;
+        }
+      });
+    } else if (closingTabIndex < _currentIndex) {
+      // 如果关闭的标签在当前标签之前，当前索引需要减1
+      setState(() {
+        _currentIndex--;
+      });
+    }
+
+    // 最后移除标签
+    ref.read(sshTabsProvider.notifier).removeTab(tab.id);
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -43,12 +69,7 @@ class _SSHTabBarState extends ConsumerState<SSHTabBar>
                   _currentIndex = index;
                 });
               },
-              onClose: (tab) {
-                ref.read(sshTabsProvider.notifier).removeTab(tab.id);
-                if (_currentIndex >= widget.tabs.length) {
-                  _currentIndex = widget.tabs.length - 1;
-                }
-              },
+              onClose: _handleTabClose,
             ),
           ),
         ),

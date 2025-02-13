@@ -105,4 +105,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get noHosts => '没有主机';
+
+  @override
+  String get edit => '编辑';
+
+  @override
+  String get delete => '删除';
 }

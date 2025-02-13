@@ -6,17 +6,109 @@ import 'package:terminflow/core/providers/ssh_tab_bar_provider.dart';
 import 'package:terminflow/data/common/responsive.dart';
 import 'package:terminflow/data/l10n/generated/l10n.dart';
 import 'package:terminflow/core/providers/host_provider.dart';
-import 'package:terminflow/screens/terminal/terminal_screen.dart';
 
 import 'top_tools_bar.dart';
 
-class HostMainContent extends ConsumerWidget {
-  const HostMainContent({
-    super.key,
-  });
+class HostMainContent extends ConsumerStatefulWidget {
+  const HostMainContent({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HostMainContent> createState() => _HostMainContentState();
+}
+
+class _HostMainContentState extends ConsumerState<HostMainContent> {
+  Offset _tapPosition = Offset.zero;
+  void _getTapPosition(TapDownDetails details) {
+    final RenderBox referenceBox = context.findRenderObject() as RenderBox;
+    setState(() {
+      _tapPosition = referenceBox.globalToLocal(details.globalPosition);
+    });
+  }
+
+  // This function will be called when you long press on the blue box or the image
+  void _showContextMenu(BuildContext context, HostInfo host) {
+    final RenderObject? overlay =
+        Overlay.of(context).context.findRenderObject();
+    final position = RelativeRect.fromRect(
+        Rect.fromLTWH(_tapPosition.dx, _tapPosition.dy, 30, 30),
+        Rect.fromLTWH(0, 0, overlay!.paintBounds.size.width,
+            overlay.paintBounds.size.height));
+    _menuContent(position, context, host);
+  }
+
+  void _createRightClickMenu(
+      BuildContext context, HostInfo host, TapDownDetails? details) {
+    final RenderBox overlay =
+        Overlay.of(context).context.findRenderObject() as RenderBox;
+
+    // 计算菜单显示位置
+    final RelativeRect position = details != null
+        ? RelativeRect.fromLTRB(
+            details.globalPosition.dx,
+            details.globalPosition.dy,
+            details.globalPosition.dx + 1,
+            details.globalPosition.dy + 1,
+          )
+        : RelativeRect.fromRect(
+            Rect.fromPoints(
+              Offset.zero,
+              Offset(
+                overlay.size.width,
+                overlay.size.height,
+              ),
+            ),
+            Offset.zero & overlay.size,
+          );
+    _menuContent(position, context, host);
+  }
+
+  _menuContent(RelativeRect position, BuildContext context, HostInfo host) {
+    return showMenu(
+      context: context,
+      position: position,
+      items: <PopupMenuEntry>[
+        PopupMenuItem(
+          value: 'edit',
+          child: ListTile(
+            leading: Icon(Icons.edit),
+            title: Text(AppLocalizations.of(context)?.edit ?? 'Edit'),
+          ),
+        ),
+        PopupMenuItem(
+          value: 'delete',
+          child: ListTile(
+            leading: Icon(Icons.delete),
+            title: Text(AppLocalizations.of(context)?.delete ?? 'Delete'),
+          ),
+        ),
+      ],
+    ).then((value) {
+      if (value == 'edit') {
+        // Navigator.of(context).push(
+        //   PageRouteBuilder(
+        //     pageBuilder: (context, animation, secondaryAnimation) =>
+        //         NewHostScreen(host: host),
+        //     transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        //       var begin = Offset(1.0, 0.0);
+        //       var end = Offset.zero;
+        //       var curve = Curves.ease;
+        //       var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+        //       var offsetAnimation = animation.drive(tween);
+        //       return SlideTransition(
+        //         position: offsetAnimation,
+        //         child: child,
+        //       );
+        //     },
+        //   ),
+        // );
+      } else if (value == 'delete') {
+        // ref.read(hostsProvider.notifier).deleteHost(host.id);
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final allHosts = ref.watch(hostsStreamProvider);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -83,6 +175,11 @@ class HostMainContent extends ConsumerWidget {
                           // );
                           ref.read(sshTabsProvider.notifier).addTab(host);
                         },
+                        onTapDown: (details) => _getTapPosition(details),
+                        // show the context menu
+                        onLongPress: () => _showContextMenu(context, host),
+                        onSecondaryTapDown: (details) =>
+                            _createRightClickMenu(context, host, details),
                         borderRadius: BorderRadius.circular(10),
                         child: HostItem(host: host, index: index));
                   },

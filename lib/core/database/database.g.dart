@@ -1126,7 +1126,8 @@ class $$PrivateKeysTableTableManager extends RootTableManager<
               getPrefetchedDataCallback: (items) async {
                 return [
                   if (hostInfosRefs)
-                    await $_getPrefetchedData(
+                    await $_getPrefetchedData<PrivateKey, $PrivateKeysTable,
+                            HostInfo>(
                         currentTable: table,
                         referencedTable: $$PrivateKeysTableReferences
                             ._hostInfosRefsTable(db),

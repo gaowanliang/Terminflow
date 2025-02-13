@@ -105,4 +105,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noHosts => 'No hosts';
+
+  @override
+  String get edit => 'Edit';
+
+  @override
+  String get delete => 'Delete';
 }
