@@ -29,7 +29,7 @@ class HostScreen extends ConsumerWidget {
             Navigator.of(context).push(
               PageRouteBuilder(
                 pageBuilder: (context, animation, secondaryAnimation) =>
-                    NewHostScreen(),
+                    NewHostScreen(null),
                 transitionsBuilder:
                     (context, animation, secondaryAnimation, child) {
                   var begin = Offset(1.0, 0.0);
@@ -48,7 +48,7 @@ class HostScreen extends ConsumerWidget {
           } else {
             ref
                 .read(drawerContentProvider.notifier)
-                .setDrawerContent(const NewHostScreen());
+                .setDrawerContent(const NewHostScreen(null));
             ref.read(drawerProvider.notifier).closeDrawer();
             ref.read(drawerProvider.notifier).openDrawer();
           }

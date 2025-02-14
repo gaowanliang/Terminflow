@@ -118,4 +118,6 @@ class AppDatabase extends _$AppDatabase {
     debugPrint('getPrivateKeyById: $id');
     return (select(privateKeys)..where((t) => t.id.equals(id))).getSingle();
   }
+
+  
 }

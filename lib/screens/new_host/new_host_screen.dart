@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -26,10 +28,16 @@ class _NewHostScreenState extends ConsumerState<NewHostScreen> {
   final _tagController = TextEditingController();
   var usePrivateKey = ValueNotifier<int?>(null);
   final privateKeyInfo = ValueNotifier<PrivateKey?>(null);
+  int _type = 0;
 
   @override
   void initState() {
     super.initState();
+    _loadInitData();
+  }
+
+  _loadInitData() async {
+    debugPrint('init data');
     if (widget.hostInfo != null) {
       _nameController.text = widget.hostInfo!.name;
       _hostController.text = widget.hostInfo!.host;
@@ -39,9 +47,24 @@ class _NewHostScreenState extends ConsumerState<NewHostScreen> {
         _commentController.text = widget.hostInfo!.comment!;
       }
 
-      _tagController.text = widget.hostInfo!.tagNum.toString();
+      //TODO _tagController.text = widget.hostInfo!.tagNum.toString();
       usePrivateKey.value = widget.hostInfo!.passwordType == 1 ? 1 : null;
-      privateKeyInfo.value = widget.hostInfo!.privateKey;
+      if (widget.hostInfo!.username.isNotEmpty) {
+        _usernameController.text = widget.hostInfo!.username;
+      }
+
+      if (usePrivateKey.value != null) {
+        final database = ref.read(AppDatabase.provider);
+        final privateKey =
+            await database.getPrivateKeyById(widget.hostInfo!.privateKeyId!);
+        privateKeyInfo.value = privateKey;
+      } else {
+        if (widget.hostInfo?.password != null) {
+          _passwordController.text = widget.hostInfo!.password!;
+        }
+      }
+
+      _type = widget.hostInfo!.type;
     }
   }
 
@@ -82,7 +105,7 @@ class _NewHostScreenState extends ConsumerState<NewHostScreen> {
       final connection = HostInfosCompanion.insert(
         name: _nameController.text,
         host: _hostController.text,
-        type: const Value(0),
+        type: Value(_type),
         port: Value(int.parse(port)),
         username: _usernameController.text,
         passwordType: usePrivateKey.value != null ? Value(1) : Value(0),
@@ -96,7 +119,14 @@ class _NewHostScreenState extends ConsumerState<NewHostScreen> {
       );
 
       final database = ref.read(AppDatabase.provider);
-      await database.hostInfos.insertOne(connection);
+      if (widget.hostInfo != null) {
+        database.hostInfos.update()
+          ..where((t) => t.id.equals(widget.hostInfo!.id))
+          ..write(connection);
+      } else {
+        await database.hostInfos.insertOne(connection);
+      }
+
       //debugPrint(privateKeyInfo.value?.name ?? 'Error');
 
       if (mounted) {

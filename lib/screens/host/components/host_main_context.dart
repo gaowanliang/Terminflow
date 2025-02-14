@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:terminflow/core/database/database.dart';
+import 'package:terminflow/core/providers/drawer_provider.dart';
 import 'package:terminflow/core/providers/ssh_tab_bar_provider.dart';
 import 'package:terminflow/data/common/responsive.dart';
 import 'package:terminflow/data/l10n/generated/l10n.dart';
 import 'package:terminflow/core/providers/host_provider.dart';
+import 'package:terminflow/screens/new_host/new_host_screen.dart';
 
 import 'top_tools_bar.dart';
 
@@ -26,18 +28,21 @@ class _HostMainContentState extends ConsumerState<HostMainContent> {
   }
 
   // This function will be called when you long press on the blue box or the image
-  void _showContextMenu(BuildContext context, HostInfo host) {
+  void _showContextMenu(BuildContext context, HostInfo host) async {
     final RenderObject? overlay =
         Overlay.of(context).context.findRenderObject();
     final position = RelativeRect.fromRect(
         Rect.fromLTWH(_tapPosition.dx, _tapPosition.dy, 30, 30),
         Rect.fromLTWH(0, 0, overlay!.paintBounds.size.width,
             overlay.paintBounds.size.height));
-    _menuContent(position, context, host);
+    final value = await _menuContent(position, context);
+    if (value != null) {
+      _onMenuItemSelected(value, host);
+    }
   }
 
   void _createRightClickMenu(
-      BuildContext context, HostInfo host, TapDownDetails? details) {
+      BuildContext context, HostInfo host, TapDownDetails? details) async {
     final RenderBox overlay =
         Overlay.of(context).context.findRenderObject() as RenderBox;
 
@@ -59,11 +64,14 @@ class _HostMainContentState extends ConsumerState<HostMainContent> {
             ),
             Offset.zero & overlay.size,
           );
-    _menuContent(position, context, host);
+    final value = await _menuContent(position, context);
+    if (value != null) {
+      _onMenuItemSelected(value, host);
+    }
   }
 
-  _menuContent(RelativeRect position, BuildContext context, HostInfo host) {
-    return showMenu(
+  _menuContent(RelativeRect position, BuildContext context) async {
+    return await showMenu(
       context: context,
       position: position,
       items: <PopupMenuEntry>[
@@ -82,29 +90,75 @@ class _HostMainContentState extends ConsumerState<HostMainContent> {
           ),
         ),
       ],
-    ).then((value) {
-      if (value == 'edit') {
-        // Navigator.of(context).push(
-        //   PageRouteBuilder(
-        //     pageBuilder: (context, animation, secondaryAnimation) =>
-        //         NewHostScreen(host: host),
-        //     transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        //       var begin = Offset(1.0, 0.0);
-        //       var end = Offset.zero;
-        //       var curve = Curves.ease;
-        //       var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-        //       var offsetAnimation = animation.drive(tween);
-        //       return SlideTransition(
-        //         position: offsetAnimation,
-        //         child: child,
-        //       );
-        //     },
-        //   ),
-        // );
-      } else if (value == 'delete') {
-        // ref.read(hostsProvider.notifier).deleteHost(host.id);
-      }
-    });
+    );
+  }
+
+  void _onMenuItemSelected(String value, HostInfo host) {
+    switch (value) {
+      case 'edit':
+        if (Responsive.isMobile(context)) {
+          // 带动画的跳转到NewHost
+          // NewHostScreen();
+          Navigator.of(context).push(
+            PageRouteBuilder(
+              pageBuilder: (context, animation, secondaryAnimation) =>
+                  NewHostScreen(host),
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                var begin = Offset(1.0, 0.0);
+                var end = Offset.zero;
+                var curve = Curves.ease;
+                var tween = Tween(begin: begin, end: end)
+                    .chain(CurveTween(curve: curve));
+                var offsetAnimation = animation.drive(tween);
+                return SlideTransition(
+                  position: offsetAnimation,
+                  child: child,
+                );
+              },
+            ),
+          );
+        } else {
+          ref
+              .read(drawerContentProvider.notifier)
+              .setDrawerContent(NewHostScreen(host));
+          ref.read(drawerProvider.notifier).closeDrawer();
+          ref.read(drawerProvider.notifier).openDrawer();
+        }
+
+        break;
+      case 'delete':
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text('Delete Host'),
+              content: Text('Are you sure you want to delete this host?'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    final database = ref.read(AppDatabase.provider);
+
+                    database.delete(database.hostInfos)
+                      ..where((t) => t.id.equals(host.id))
+                      ..go();
+                    Navigator.of(context).pop();
+                  },
+                  child: Text(AppLocalizations.of(context)?.delete ?? 'Delete'),
+                ),
+              ],
+            );
+          },
+        );
+
+        break;
+    }
   }
 
   @override

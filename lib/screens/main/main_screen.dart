@@ -21,6 +21,7 @@ class _HomeState extends State<MainScreen> with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   late final AnimationController controller;
   late final CurvedAnimation railAnimation;
+  late final PageController _pageController;
   bool controllerInitialized = false;
   bool showMediumSizeLayout = false;
   bool showLargeSizeLayout = false;
@@ -39,11 +40,13 @@ class _HomeState extends State<MainScreen> with SingleTickerProviderStateMixin {
       parent: controller,
       curve: const Interval(0.5, 1.0),
     );
+    _pageController = PageController(initialPage: screenIndex);
   }
 
   @override
   void dispose() {
     controller.dispose();
+    _pageController.dispose();
     super.dispose();
   }
 
@@ -79,25 +82,36 @@ class _HomeState extends State<MainScreen> with SingleTickerProviderStateMixin {
     }
   }
 
+  // void handleScreenChanged(int screenSelected) {
+  //   setState(() {
+  //     screenIndex = screenSelected;
+  //   });
+  // }
+
+  final List<Widget> _pages = [
+    const HostScreen(),
+    const SftpScreen(),
+    const SnippetsScreen(),
+    const SettingScreen(),
+  ];
+  Widget createScreenFor(
+      ScreenSelected screenSelected, bool showNavBarExample) {
+    return Expanded(
+      child: PageView(
+        controller: _pageController,
+        physics: const NeverScrollableScrollPhysics(), // 禁用滑动
+        onPageChanged: handleScreenChanged,
+        children: _pages,
+      ),
+    );
+  }
+
   void handleScreenChanged(int screenSelected) {
     setState(() {
       screenIndex = screenSelected;
+      _pageController.animateToPage(screenIndex,
+          duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
     });
-  }
-
-  //
-  Widget createScreenFor(
-      ScreenSelected screenSelected, bool showNavBarExample) {
-    switch (screenSelected) {
-      case ScreenSelected.host:
-        return const HostScreen();
-      case ScreenSelected.sftp:
-        return const SftpScreen();
-      case ScreenSelected.snippets:
-        return const SnippetsScreen();
-      case ScreenSelected.setting:
-        return const SettingScreen();
-    }
   }
 
   Widget _expandedTrailingActions() => Container(
