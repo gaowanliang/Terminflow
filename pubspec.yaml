@@ -44,13 +44,13 @@ dependencies:
   icons_plus: ^5.0.0
   drift: ^2.24.0
   drift_flutter: ^0.2.4
-  path_provider: 
+  path_provider:
   xterm: ^4.0.0
   word_generator: ^0.4.5
-  flutter_easyloading: 
+  flutter_easyloading:
   dartssh2:
-  flutter_secure_storage: 
-  pointycastle: 
+  flutter_secure_storage:
+  pointycastle:
   hex: ^0.2.0
   bip39_mnemonic: ^3.0.7
   dotted_border: ^2.1.0

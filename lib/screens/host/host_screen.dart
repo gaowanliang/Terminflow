@@ -13,49 +13,48 @@ class HostScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Expanded(
-        child: Scaffold(
-      body: Padding(
-        padding: Responsive.isMobile(context)
-            ? const EdgeInsets.symmetric(horizontal: 16)
-            : const EdgeInsets.fromLTRB(16, 8, 16, 20),
-        child: HostFrame(),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          if (Responsive.isMobile(context)) {
-            // 带动画的跳转到NewHost
-            // NewHostScreen();
-            Navigator.of(context).push(
-              PageRouteBuilder(
-                pageBuilder: (context, animation, secondaryAnimation) =>
-                    NewHostScreen(null),
-                transitionsBuilder:
-                    (context, animation, secondaryAnimation, child) {
-                  var begin = Offset(1.0, 0.0);
-                  var end = Offset.zero;
-                  var curve = Curves.ease;
-                  var tween = Tween(begin: begin, end: end)
-                      .chain(CurveTween(curve: curve));
-                  var offsetAnimation = animation.drive(tween);
-                  return SlideTransition(
-                    position: offsetAnimation,
-                    child: child,
-                  );
-                },
-              ),
-            );
-          } else {
-            ref
-                .read(drawerContentProvider.notifier)
-                .setDrawerContent(const NewHostScreen(null));
-            ref.read(drawerProvider.notifier).closeDrawer();
-            ref.read(drawerProvider.notifier).openDrawer();
-          }
-        },
-        child: const Icon(Icons.add),
-      ),
-    ));
+    return Scaffold(
+          body: Padding(
+    padding: Responsive.isMobile(context)
+        ? const EdgeInsets.symmetric(horizontal: 16)
+        : const EdgeInsets.fromLTRB(16, 8, 16, 20),
+    child: HostFrame(),
+          ),
+          floatingActionButton: FloatingActionButton(
+    onPressed: () {
+      if (Responsive.isMobile(context)) {
+        // 带动画的跳转到NewHost
+        // NewHostScreen();
+        Navigator.of(context).push(
+          PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) =>
+                NewHostScreen(null),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+              var begin = Offset(1.0, 0.0);
+              var end = Offset.zero;
+              var curve = Curves.ease;
+              var tween = Tween(begin: begin, end: end)
+                  .chain(CurveTween(curve: curve));
+              var offsetAnimation = animation.drive(tween);
+              return SlideTransition(
+                position: offsetAnimation,
+                child: child,
+              );
+            },
+          ),
+        );
+      } else {
+        ref
+            .read(drawerContentProvider.notifier)
+            .setDrawerContent(const NewHostScreen(null));
+        ref.read(drawerProvider.notifier).closeDrawer();
+        ref.read(drawerProvider.notifier).openDrawer();
+      }
+    },
+    child: const Icon(Icons.add),
+          ),
+        );
   }
 }
 

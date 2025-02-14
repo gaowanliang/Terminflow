@@ -50,94 +50,92 @@ class SettingScreen extends StatefulWidget {
 class _SettingScreenState extends State<SettingScreen> {
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Scaffold(
-        body: Padding(
-          padding: Responsive.isMobile(context)
-              ? const EdgeInsets.symmetric(horizontal: 16)
-              : const EdgeInsets.fromLTRB(16, 20, 16, 20),
-          child: Row(
-            children: [
-              Expanded(
-                flex: 1,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color:
-                        Theme.of(context).colorScheme.onPrimary.withAlpha(50),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                    ),
+    return Scaffold(
+      body: Padding(
+        padding: Responsive.isMobile(context)
+            ? const EdgeInsets.symmetric(horizontal: 16)
+            : const EdgeInsets.fromLTRB(16, 20, 16, 20),
+        child: Row(
+          children: [
+            Expanded(
+              flex: 1,
+              child: Container(
+                decoration: BoxDecoration(
+                  color:
+                      Theme.of(context).colorScheme.onPrimary.withAlpha(50),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.onPrimary,
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ListView.separated(
-                      itemBuilder: (context, index) {
-                        return ListTile(
-                          leading: Icon(SettingScreen.listInfo[index].icon),
-                          title: Text(SettingScreen.listInfo[index].title),
-                          onTap: () {},
-                        );
-                      },
-                      separatorBuilder: (context, index) {
-                        return const Divider();
-                      },
-                      itemCount: SettingScreen.listInfo.length,
-                    ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ListView.separated(
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        leading: Icon(SettingScreen.listInfo[index].icon),
+                        title: Text(SettingScreen.listInfo[index].title),
+                        onTap: () {},
+                      );
+                    },
+                    separatorBuilder: (context, index) {
+                      return const Divider();
+                    },
+                    itemCount: SettingScreen.listInfo.length,
                   ),
                 ),
               ),
-              const SizedBox(width: 16),
-              Expanded(
-                  flex: 2,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('同步短语',
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineMedium
-                              ?.copyWith(fontWeight: FontWeight.bold)),
-                      const SizedBox(height: 16),
-                      Text(
-                        '您的同步短语可以保护您的数据，当您在新设备上同步时，您可以使用同步短语来解密您的数据。将其保存在安全的地方。在同步时，您的数据将被加密并上传到对端，但此同步短语将不会上传。点击显示：',
-                      ),
-                      const SizedBox(height: 16),
-                      SyncWordsWidget(),
-                      const SizedBox(height: 8),
-                      const Divider(),
-                      const SizedBox(height: 8),
-                      Text('选择远程服务',
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineMedium
-                              ?.copyWith(fontWeight: FontWeight.bold)),
-                      const SizedBox(height: 16),
-                      CardX(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Flexible(
-                                child: Text(
-                                    "从这里开始设置，你想连接到哪个服务？将会支持S3、WebDAV、OneDrive等服务。")),
-                            const SizedBox(width: 16),
-                            DropdownMenu(
-                              width: MediaQuery.of(context).size.width * 0.15,
-                              label: Text(
-                                AppLocalizations.of(context)?.group ?? '分组',
-                              ),
-                              dropdownMenuEntries: [
-                                DropdownMenuEntry(
-                                    value: "s3", label: "S3 (或兼容S3的服务)"),
-                              ],
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+                flex: 2,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('同步短语',
+                        style: Theme.of(context)
+                            .textTheme
+                            .headlineMedium
+                            ?.copyWith(fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 16),
+                    Text(
+                      '您的同步短语可以保护您的数据，当您在新设备上同步时，您可以使用同步短语来解密您的数据。将其保存在安全的地方。在同步时，您的数据将被加密并上传到对端，但此同步短语将不会上传。点击显示：',
+                    ),
+                    const SizedBox(height: 16),
+                    SyncWordsWidget(),
+                    const SizedBox(height: 8),
+                    const Divider(),
+                    const SizedBox(height: 8),
+                    Text('选择远程服务',
+                        style: Theme.of(context)
+                            .textTheme
+                            .headlineMedium
+                            ?.copyWith(fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 16),
+                    CardX(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Flexible(
+                              child: Text(
+                                  "从这里开始设置，你想连接到哪个服务？将会支持S3、WebDAV、OneDrive等服务。")),
+                          const SizedBox(width: 16),
+                          DropdownMenu(
+                            width: MediaQuery.of(context).size.width * 0.15,
+                            label: Text(
+                              AppLocalizations.of(context)?.group ?? '分组',
                             ),
-                          ],
-                        ),
-                      )
-                    ],
-                  )),
-            ],
-          ),
+                            dropdownMenuEntries: [
+                              DropdownMenuEntry(
+                                  value: "s3", label: "S3 (或兼容S3的服务)"),
+                            ],
+                          ),
+                        ],
+                      ),
+                    )
+                  ],
+                )),
+          ],
         ),
       ),
     );

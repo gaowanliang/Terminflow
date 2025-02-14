@@ -109,8 +109,9 @@ class _HomeState extends State<MainScreen> with SingleTickerProviderStateMixin {
   void handleScreenChanged(int screenSelected) {
     setState(() {
       screenIndex = screenSelected;
-      _pageController.animateToPage(screenIndex,
-          duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+      // _pageController.animateToPage(screenIndex,
+      //     duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+      _pageController.jumpToPage(screenIndex);
     });
   }
 
