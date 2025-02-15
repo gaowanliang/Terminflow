@@ -1,11 +1,9 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:terminflow/data/common/responsive.dart';
 import 'package:terminflow/data/l10n/generated/l10n.dart';
-import 'package:terminflow/screens/public/card_x.dart';
-import 'package:word_generator/word_generator.dart';
+
+import 'components/s3_setting_widget.dart';
+import 'components/sync_words_widget.dart';
 
 class ListInfo {
   final IconData icon;
@@ -20,34 +18,52 @@ class ListInfo {
 class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});
 
-  static List<ListInfo> listInfo = [
-    ListInfo(
-      icon: Icons.tune,
-      title: '偏好设定',
-    ),
-    ListInfo(
-      icon: Icons.color_lens,
-      title: '外观',
-    ),
-    ListInfo(
-      icon: Icons.key,
-      title: '私钥管理',
-    ),
-    ListInfo(
-      icon: Icons.cloud_sync,
-      title: '同步管理',
-    ),
-    ListInfo(
-      icon: Icons.help,
-      title: "关于",
-    ),
-  ];
-
   @override
   State<SettingScreen> createState() => _SettingScreenState();
 }
 
 class _SettingScreenState extends State<SettingScreen> {
+  late List<ListInfo> listInfo;
+  bool _initialized = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // 移除这里的初始化代码
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_initialized) {
+      listInfo = [
+        ListInfo(
+          icon: Icons.tune,
+          title: AppLocalizations.of(context)?.preferences ?? 'Preferences',
+        ),
+        ListInfo(
+          icon: Icons.color_lens,
+          title: AppLocalizations.of(context)?.appearance ?? 'Appearance',
+        ),
+        ListInfo(
+          icon: Icons.key,
+          title: AppLocalizations.of(context)?.privateKeyManagement ??
+              'Private Key Management',
+        ),
+        ListInfo(
+          icon: Icons.cloud_sync,
+          title:
+              AppLocalizations.of(context)?.syncManagement ?? 'Sync Management',
+        ),
+        ListInfo(
+          icon: Icons.help,
+          title: AppLocalizations.of(context)?.about ?? 'About',
+        ),
+      ];
+      _initialized = true;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,8 +77,7 @@ class _SettingScreenState extends State<SettingScreen> {
               flex: 1,
               child: Container(
                 decoration: BoxDecoration(
-                  color:
-                      Theme.of(context).colorScheme.onPrimary.withAlpha(50),
+                  color: Theme.of(context).colorScheme.onPrimary.withAlpha(50),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
                     color: Theme.of(context).colorScheme.onPrimary,
@@ -73,15 +88,15 @@ class _SettingScreenState extends State<SettingScreen> {
                   child: ListView.separated(
                     itemBuilder: (context, index) {
                       return ListTile(
-                        leading: Icon(SettingScreen.listInfo[index].icon),
-                        title: Text(SettingScreen.listInfo[index].title),
+                        leading: Icon(listInfo[index].icon),
+                        title: Text(listInfo[index].title),
                         onTap: () {},
                       );
                     },
                     separatorBuilder: (context, index) {
                       return const Divider();
                     },
-                    itemCount: SettingScreen.listInfo.length,
+                    itemCount: listInfo.length,
                   ),
                 ),
               ),
@@ -89,175 +104,63 @@ class _SettingScreenState extends State<SettingScreen> {
             const SizedBox(width: 16),
             Expanded(
                 flex: 2,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('同步短语',
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineMedium
-                            ?.copyWith(fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 16),
-                    Text(
-                      '您的同步短语可以保护您的数据，当您在新设备上同步时，您可以使用同步短语来解密您的数据。将其保存在安全的地方。在同步时，您的数据将被加密并上传到对端，但此同步短语将不会上传。点击显示：',
-                    ),
-                    const SizedBox(height: 16),
-                    SyncWordsWidget(),
-                    const SizedBox(height: 8),
-                    const Divider(),
-                    const SizedBox(height: 8),
-                    Text('选择远程服务',
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineMedium
-                            ?.copyWith(fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 16),
-                    CardX(
-                      child: Row(
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                          AppLocalizations.of(context)?.syncWords ??
+                              'Sync Words',
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineMedium
+                              ?.copyWith(fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 16),
+                      Text(AppLocalizations.of(context)?.syncWordsTip ??
+                          'Your sync words can protect your data, when you sync on a new device, you can use the sync words to decrypt your data. Keep it in a safe place. During sync, your data will be encrypted and uploaded to the peer, but this sync words will not be uploaded. Click to show:'),
+                      const SizedBox(height: 16),
+                      SyncWordsWidget(),
+                      const SizedBox(height: 8),
+                      const Divider(),
+                      const SizedBox(height: 8),
+                      Text(
+                          AppLocalizations.of(context)?.selectRemoteService ??
+                              'Select Remote Service',
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineMedium
+                              ?.copyWith(fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 16),
+                      Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Flexible(
                               child: Text(
-                                  "从这里开始设置，你想连接到哪个服务？将会支持S3、WebDAV、OneDrive等服务。")),
+                                  AppLocalizations.of(context)?.selectRemoteServiceTip ??
+                                      'Start here to set up which service you want to connect to? Will support services such as S3, WebDAV, OneDrive, etc.')),
                           const SizedBox(width: 16),
                           DropdownMenu(
                             width: MediaQuery.of(context).size.width * 0.15,
                             label: Text(
-                              AppLocalizations.of(context)?.group ?? '分组',
+                              AppLocalizations.of(context)
+                                      ?.remoteService ??
+                                  'Remote Service',
                             ),
                             dropdownMenuEntries: [
                               DropdownMenuEntry(
-                                  value: "s3", label: "S3 (或兼容S3的服务)"),
+                                  value: "s3",
+                                  label: AppLocalizations.of(context)
+                                          ?.s3OrCompatible ??
+                                      'S3 (or compatible S3 service)'),
                             ],
                           ),
                         ],
                       ),
-                    )
-                  ],
+                      const SizedBox(height: 16),
+                      S3SettingWidget(),
+                    ],
+                  ),
                 )),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class SyncWordsWidget extends StatefulWidget {
-  const SyncWordsWidget({super.key});
-
-  @override
-  State<SyncWordsWidget> createState() => _SyncWordsWidgetState();
-}
-
-class _SyncWordsWidgetState extends State<SyncWordsWidget> {
-  final storage = FlutterSecureStorage();
-  static List<Color> colors = [
-    Colors.red,
-    Colors.deepOrange,
-    Colors.blue,
-    Colors.green,
-    Colors.yellow,
-    Colors.purple,
-    Colors.orange,
-    Colors.pink,
-    Colors.teal,
-    Colors.cyan,
-    Colors.indigo,
-    Colors.lime,
-    Colors.amber,
-    Colors.brown,
-    Colors.grey,
-    Colors.blueGrey,
-  ];
-
-  bool _isBlurred = true;
-
-  Future<String> getSyncWords() async {
-    debugPrint('getSyncWords');
-
-    try {
-      String? value = await storage.read(key: 'syncWords');
-      debugPrint('value: $value');
-      if (value != null) {
-        return value;
-      } else {
-        final wordGenerator = WordGenerator();
-        final words = wordGenerator.randomSentence(16);
-        await storage.write(key: 'syncWords', value: words);
-        return words;
-      }
-    } catch (e) {
-      debugPrint('error: $e');
-      return '123 456 789 123 456 789 123 456 789 123 456 789 123 456 789 123 456 789';
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.onPrimary.withAlpha(50),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          children: [
-            Expanded(
-              child: ImageFiltered(
-                imageFilter: _isBlurred
-                    ? ImageFilter.blur(sigmaX: 5, sigmaY: 5)
-                    : ImageFilter.blur(sigmaX: 0, sigmaY: 0),
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(8),
-                  onTap: () {
-                    setState(() {
-                      _isBlurred = !_isBlurred;
-                    });
-                  },
-                  child: FutureBuilder(
-                      future: getSyncWords(),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
-
-                        final wordsList = snapshot.data.toString().split(' ');
-                        return Wrap(
-                          alignment: WrapAlignment.center,
-                          children: List.generate(
-                            wordsList.length,
-                            (index) => Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 4,
-                              ),
-                              child: Text(
-                                wordsList[index],
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: colors[index % colors.length],
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ),
-                        );
-                      }),
-                ),
-              ),
-            ),
-            IconButton(
-              icon: Icon(
-                  _isBlurred ? Icons.remove_red_eye : Icons.visibility_off),
-              onPressed: () {
-                setState(() {
-                  _isBlurred = !_isBlurred;
-                });
-              },
-            ),
           ],
         ),
       ),

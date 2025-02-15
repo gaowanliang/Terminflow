@@ -1,8 +1,9 @@
 import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 import 'package:bip39_mnemonic/bip39_mnemonic.dart';
+import 'package:flutter/foundation.dart';
 import 'package:pointycastle/export.dart';
-import 'package:hex/hex.dart';
 import 'dart:convert';
 
 class CryptoData {
@@ -12,25 +13,30 @@ class CryptoData {
 
   // 从助记词生成密钥
   static Uint8List keyFromMnemonic(String mnemonic) {
-    // 从助记词生成种子
-    final seed = Mnemonic.generate(
-      Language.english,
-      passphrase: mnemonic,
-      entropyLength: 256,
-    );
-    // 使用HMAC-SHA256导出固定长度密钥
+    // 直接使用 HMAC-SHA256 从助记词生成密钥
     final hmac = HMac(SHA256Digest(), 64);
-    final params = KeyParameter(utf8.encode('aes_key'));
+    final params = KeyParameter(utf8.encode('terminflow_salt')); // 使用应用特定的盐值
     hmac.init(params);
-    final digest = hmac.process(Uint8List.fromList(seed.seed));
+
+    // 将助记词转换为字节数组作为输入
+    final mnemonicBytes = utf8.encode(mnemonic);
+    final digest = hmac.process(Uint8List.fromList(mnemonicBytes));
+
     return digest.sublist(0, KEY_SIZE);
   }
 
   // 生成随机 nonce
   static Uint8List generateNonce() {
-    final secureRandom = SecureRandom('Fortuna')
-      ..seed(KeyParameter(
-          Uint8List.fromList(HEX.decode('000102030405060708090a0b0c0d0e0f'))));
+    final secureRandom = FortunaRandom();
+
+    // 使用系统随机源初始化
+    final random = Random.secure();
+    final seed = Uint8List(32);
+    for (var i = 0; i < 32; i++) {
+      seed[i] = random.nextInt(256);
+    }
+
+    secureRandom.seed(KeyParameter(seed));
     return secureRandom.nextBytes(NONCE_SIZE);
   }
 
@@ -38,6 +44,7 @@ class CryptoData {
   static Map<String, Uint8List> encryptWithMnemonic(
       Uint8List data, String mnemonic) {
     final key = keyFromMnemonic(mnemonic);
+    debugPrint('key: $key');
     return encrypt(data, key);
   }
 
@@ -45,6 +52,7 @@ class CryptoData {
   static Uint8List decryptWithMnemonic(Uint8List cipherText, Uint8List authTag,
       Uint8List nonce, String mnemonic) {
     final key = keyFromMnemonic(mnemonic);
+    debugPrint('key: $key');
     return decrypt(cipherText, authTag, nonce, key);
   }
 

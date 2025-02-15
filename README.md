@@ -25,6 +25,9 @@ The project is currently under development and no version has been released yet.
 - [ ] SFTP File Transfer
 - [ ] Code Snippets
 - [ ] Session Synchronization
+  - [x] S3 and compatible services (tested platforms: [Cloudflare R2](https://www.cloudflare.com/developer-platform/products/r2/))
+  - [ ] WebDAV
+  - [ ] OneDrive
 - [ ] Security Encryption
 - [x] Multi-language Support
   - [x] English

@@ -9,7 +9,7 @@ import 'package:path/path.dart' as p;
 Future<File> get databaseFile async {
   // We use `path_provider` to find a suitable path to store our data in.
   final appDir = await getApplicationDocumentsDirectory();
-  final dbPath = p.join(appDir.path, 'todo-app.sqlite');
+  final dbPath = p.join(appDir.path, 'Terminflow.sqlite');
   return File(dbPath);
 }
 

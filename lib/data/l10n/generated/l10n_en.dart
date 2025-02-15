@@ -114,4 +114,81 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get nameAndAddressCannotBeEmpty => 'Name and address cannot be empty';
+
+  @override
+  String fileUploadFailed(Object msg) {
+    return 'File upload failed: $msg';
+  }
+
+  @override
+  String get fileUploadSuccess => 'File upload success';
+
+  @override
+  String fileDownloadFailed(Object msg) {
+    return 'File download failed: $msg';
+  }
+
+  @override
+  String get fileDownloadSuccess => 'File download success';
+
+  @override
+  String get configAlreadyPasteToClipboard => 'Config already paste to clipboard';
+
+  @override
+  String configPasteToClipboardFailed(Object msg) {
+    return 'Config paste to clipboard failed: $msg';
+  }
+
+  @override
+  String get syncWordsNotSet => 'Sync words not set';
+
+  @override
+  String get syncWordsError => 'Sync words error';
+
+  @override
+  String get configAlreadyRestore => 'Config already restore';
+
+  @override
+  String configRestoreFailed(Object msg) {
+    return 'Config restore failed: $msg';
+  }
+
+  @override
+  String get manualUpload => 'Manual upload';
+
+  @override
+  String get manualPull => 'Manual pull';
+
+  @override
+  String get preferences => 'Preferences';
+
+  @override
+  String get appearance => 'Appearance';
+
+  @override
+  String get privateKeyManagement => 'Private key management';
+
+  @override
+  String get syncManagement => 'Sync management';
+
+  @override
+  String get about => 'About';
+
+  @override
+  String get syncWords => 'Sync words';
+
+  @override
+  String get syncWordsTip => 'Your sync words can protect your data, when you sync on a new device, you can use the sync words to decrypt your data. Keep it in a safe place. During sync, your data will be encrypted and uploaded to the peer, but this sync words will not be uploaded. Click to show:';
+
+  @override
+  String get selectRemoteService => 'Select remote service';
+
+  @override
+  String get selectRemoteServiceTip => 'Start here to set up which service you want to connect to? Will support services such as S3, WebDAV, OneDrive, etc.';
+
+  @override
+  String get remoteService => 'Remote service';
+
+  @override
+  String get s3OrCompatible => 'S3 (or compatible S3 service)';
 }

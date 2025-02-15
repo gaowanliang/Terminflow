@@ -24,7 +24,10 @@
   - [ ] 代理登录
 - [ ] SFTP 文件传输
 - [ ] 代码片段
-- [ ] 会话同步
+- [x] 会话同步
+  - [x] S3 及兼容服务(已测试平台：[Cloudflare R2](https://www.cloudflare.com/developer-platform/products/r2/)) 
+  - [ ] WebDAV
+  - [ ] OneDrive
 - [ ] 安全加密
 - [x] 多语言支持
   - [x] 英语

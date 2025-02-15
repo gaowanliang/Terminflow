@@ -114,4 +114,81 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get nameAndAddressCannotBeEmpty => '名称和地址不能为空';
+
+  @override
+  String fileUploadFailed(Object msg) {
+    return '文件上传失败：$msg';
+  }
+
+  @override
+  String get fileUploadSuccess => '文件上传成功';
+
+  @override
+  String fileDownloadFailed(Object msg) {
+    return '文件下载失败：$msg';
+  }
+
+  @override
+  String get fileDownloadSuccess => '文件下载成功';
+
+  @override
+  String get configAlreadyPasteToClipboard => '配置已经复制到剪贴板';
+
+  @override
+  String configPasteToClipboardFailed(Object msg) {
+    return '配置复制到剪贴板失败：$msg';
+  }
+
+  @override
+  String get syncWordsNotSet => 'Sync words not set';
+
+  @override
+  String get syncWordsError => 'Sync words error';
+
+  @override
+  String get configAlreadyRestore => '配置已经恢复';
+
+  @override
+  String configRestoreFailed(Object msg) {
+    return '配置恢复失败：$msg';
+  }
+
+  @override
+  String get manualUpload => '手动上传';
+
+  @override
+  String get manualPull => '手动拉取';
+
+  @override
+  String get preferences => '偏好设置';
+
+  @override
+  String get appearance => '外观';
+
+  @override
+  String get privateKeyManagement => '私钥管理';
+
+  @override
+  String get syncManagement => '同步管理';
+
+  @override
+  String get about => '关于';
+
+  @override
+  String get syncWords => '同步短语';
+
+  @override
+  String get syncWordsTip => '您的同步短语可以保护您的数据，当您在新设备上同步时，您可以使用同步短语来解密您的数据。将其保存在安全的地方。在同步时，您的数据将被加密并上传到对端，但此同步短语将不会上传。点击显示：';
+
+  @override
+  String get selectRemoteService => '选择远程服务';
+
+  @override
+  String get selectRemoteServiceTip => '从这里开始设置，你想连接到哪个服务？将会支持S3、WebDAV、OneDrive等服务。';
+
+  @override
+  String get remoteService => '远程服务';
+
+  @override
+  String get s3OrCompatible => 'S3 (或兼容S3的服务)';
 }

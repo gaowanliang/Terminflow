@@ -304,6 +304,144 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Name and address cannot be empty'**
   String get nameAndAddressCannotBeEmpty;
+
+  /// No description provided for @fileUploadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'File upload failed: {msg}'**
+  String fileUploadFailed(Object msg);
+
+  /// No description provided for @fileUploadSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'File upload success'**
+  String get fileUploadSuccess;
+
+  /// No description provided for @fileDownloadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'File download failed: {msg}'**
+  String fileDownloadFailed(Object msg);
+
+  /// No description provided for @fileDownloadSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'File download success'**
+  String get fileDownloadSuccess;
+
+  /// No description provided for @configAlreadyPasteToClipboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Config already paste to clipboard'**
+  String get configAlreadyPasteToClipboard;
+
+  /// No description provided for @configPasteToClipboardFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Config paste to clipboard failed: {msg}'**
+  String configPasteToClipboardFailed(Object msg);
+
+  /// No description provided for @syncWordsNotSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync words not set'**
+  String get syncWordsNotSet;
+
+  /// No description provided for @syncWordsError.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync words error'**
+  String get syncWordsError;
+
+  /// No description provided for @configAlreadyRestore.
+  ///
+  /// In en, this message translates to:
+  /// **'Config already restore'**
+  String get configAlreadyRestore;
+
+  /// No description provided for @configRestoreFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Config restore failed: {msg}'**
+  String configRestoreFailed(Object msg);
+
+  /// No description provided for @manualUpload.
+  ///
+  /// In en, this message translates to:
+  /// **'Manual upload'**
+  String get manualUpload;
+
+  /// No description provided for @manualPull.
+  ///
+  /// In en, this message translates to:
+  /// **'Manual pull'**
+  String get manualPull;
+
+  /// No description provided for @preferences.
+  ///
+  /// In en, this message translates to:
+  /// **'Preferences'**
+  String get preferences;
+
+  /// No description provided for @appearance.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get appearance;
+
+  /// No description provided for @privateKeyManagement.
+  ///
+  /// In en, this message translates to:
+  /// **'Private key management'**
+  String get privateKeyManagement;
+
+  /// No description provided for @syncManagement.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync management'**
+  String get syncManagement;
+
+  /// No description provided for @about.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get about;
+
+  /// No description provided for @syncWords.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync words'**
+  String get syncWords;
+
+  /// No description provided for @syncWordsTip.
+  ///
+  /// In en, this message translates to:
+  /// **'Your sync words can protect your data, when you sync on a new device, you can use the sync words to decrypt your data. Keep it in a safe place. During sync, your data will be encrypted and uploaded to the peer, but this sync words will not be uploaded. Click to show:'**
+  String get syncWordsTip;
+
+  /// No description provided for @selectRemoteService.
+  ///
+  /// In en, this message translates to:
+  /// **'Select remote service'**
+  String get selectRemoteService;
+
+  /// No description provided for @selectRemoteServiceTip.
+  ///
+  /// In en, this message translates to:
+  /// **'Start here to set up which service you want to connect to? Will support services such as S3, WebDAV, OneDrive, etc.'**
+  String get selectRemoteServiceTip;
+
+  /// No description provided for @remoteService.
+  ///
+  /// In en, this message translates to:
+  /// **'Remote service'**
+  String get remoteService;
+
+  /// No description provided for @s3OrCompatible.
+  ///
+  /// In en, this message translates to:
+  /// **'S3 (or compatible S3 service)'**
+  String get s3OrCompatible;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
