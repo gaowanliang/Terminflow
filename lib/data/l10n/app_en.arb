@@ -33,5 +33,6 @@
     "usePrivateKey": "Use private key",
     "noHosts": "No hosts",
     "edit": "Edit",
-    "delete": "Delete"
+    "delete": "Delete",
+    "nameAndAddressCannotBeEmpty": "Name and address cannot be empty"
 }

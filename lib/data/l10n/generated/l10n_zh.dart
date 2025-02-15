@@ -111,4 +111,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get delete => '删除';
+
+  @override
+  String get nameAndAddressCannotBeEmpty => '名称和地址不能为空';
 }

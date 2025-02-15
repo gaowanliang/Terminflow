@@ -21,63 +21,89 @@ class SSHTabBar extends ConsumerStatefulWidget {
 
 class _SSHTabBarState extends ConsumerState<SSHTabBar>
     with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
-  int _currentIndex = 0;
-
   @override
   bool get wantKeepAlive => true;
 
-  void _handleTabClose(SSHTab tab) {
-    final currentTabId = widget.tabs[_currentIndex].id;
-    final closingTabIndex = widget.tabs.indexWhere((t) => t.id == tab.id);
+  final ValueNotifier<int> _currentIndex = ValueNotifier(0);
 
-    // 如果关闭的是当前标签，先更新索引
-    if (tab.id == currentTabId) {
-      setState(() {
-        // 如果关闭的是最后一个标签，选中前一个
-        if (closingTabIndex == widget.tabs.length - 1) {
-          _currentIndex = closingTabIndex - 1;
-        } else {
-          // 否则选中下一个标签
-          _currentIndex = closingTabIndex;
-        }
-      });
-    } else if (closingTabIndex < _currentIndex) {
-      // 如果关闭的标签在当前标签之前，当前索引需要减1
-      setState(() {
-        _currentIndex--;
-      });
+  // 获取可见标签对应的原始索引
+  List<int> _getVisibleToOriginalIndices() {
+    return widget.tabs
+        .asMap()
+        .entries
+        .where((entry) => !entry.value.isHidden.value)
+        .map((entry) => entry.key)
+        .toList();
+  }
+
+  void _handleTabClose(SSHTab tab) {
+    final originalIndices = _getVisibleToOriginalIndices();
+    final closingTabIndex = widget.tabs.indexWhere((t) => t.id == tab.id);
+    final visibleIndex = originalIndices.indexOf(closingTabIndex);
+    final isClosingCurrent =
+        originalIndices[_currentIndex.value] == closingTabIndex;
+
+    // 计算新的可见索引
+    int newVisibleIndex = _currentIndex.value;
+    if (isClosingCurrent) {
+      if (visibleIndex == originalIndices.length - 1) {
+        newVisibleIndex = visibleIndex - 1;
+      } else {
+        newVisibleIndex = visibleIndex;
+      }
+    } else if (visibleIndex < _currentIndex.value) {
+      newVisibleIndex = _currentIndex.value - 1;
     }
 
-    // 最后移除标签
-    ref.read(sshTabsProvider.notifier).removeTab(tab.id);
+    // 隐藏标签
+    ref.read(sshTabsProvider.notifier).hideTab(tab.id);
+
+    // 更新索引
+    _currentIndex.value = newVisibleIndex;
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    final visibleTabs =
+        widget.tabs.where((tab) => !tab.isHidden.value).toList();
+    final originalIndices = _getVisibleToOriginalIndices();
+
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(48),
+        preferredSize: const Size.fromHeight(56),
         child: Padding(
           padding: const EdgeInsets.only(bottom: 8),
           child: CardX(
-            child: CustomTabBar(
-              currentIndex: _currentIndex,
-              tabs: widget.tabs,
-              onTap: (index) {
-                setState(() {
-                  _currentIndex = index;
-                });
+            child: ValueListenableBuilder<int>(
+              valueListenable: _currentIndex,
+              builder: (context, currentIndex, _) {
+                return CustomTabBar(
+                  currentIndex: currentIndex,
+                  tabs: visibleTabs,
+                  onTap: (index) {
+                    _currentIndex.value = index;
+                  },
+                  onClose: _handleTabClose,
+                );
               },
-              onClose: _handleTabClose,
             ),
           ),
         ),
       ),
-      body: IndexedStack(
-        index: _currentIndex,
-        children:
-            widget.tabs.map((tab) => tab.terminal ?? const SizedBox()).toList(),
+      body: ValueListenableBuilder<int>(
+        valueListenable: _currentIndex,
+        builder: (context, currentIndex, _) {
+          return IndexedStack(
+            index: originalIndices[currentIndex], // 使用映射后的原始索引
+            children: widget.tabs.map((tab) {
+              return KeyedSubtree(
+                key: ValueKey(tab.id),
+                child: tab.terminal ?? const SizedBox(),
+              );
+            }).toList(),
+          );
+        },
       ),
     );
   }
@@ -99,6 +125,25 @@ class CustomTabBar extends StatelessWidget {
 
   static const kWideWidth = 90.0;
   static const kNarrowWidth = 60.0;
+
+  Color _getStatusColor(int idx) {
+    switch (idx) {
+      case 0:
+        return Colors.grey;
+      case 1:
+        return Colors.orange;
+      case 2:
+        return Colors.blue;
+      case 3:
+        return Colors.green;
+      case 4:
+        return Colors.red;
+      case 5:
+        return Colors.purple;
+      default:
+        return Colors.grey;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -156,7 +201,21 @@ class CustomTabBar extends StatelessWidget {
           ],
         );
       } else {
-        btn = Center(child: text);
+        btn = ValueListenableBuilder<int>(
+          valueListenable: item.connectionState,
+          builder: (_, status, __) {
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                text,
+                Container(
+                  height: 2,
+                  color: _getStatusColor(status),
+                )
+              ],
+            );
+          },
+        );
       }
       child = AnimatedContainer(
         width: selected ? kWideWidth : kNarrowWidth,
@@ -174,7 +233,14 @@ class CustomTabBar extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(13),
         onTap: () => onTap(idx),
-        child: child,
+        child: GestureDetector(
+          onTertiaryTapUp: (details) {
+            if (idx > 0 && idx < tabs.length) {
+              onClose(tabs[idx]);
+            }
+          },
+          child: child,
+        ),
       ),
     );
   }

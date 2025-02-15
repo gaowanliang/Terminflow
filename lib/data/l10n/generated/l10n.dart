@@ -298,6 +298,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Delete'**
   String get delete;
+
+  /// No description provided for @nameAndAddressCannotBeEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Name and address cannot be empty'**
+  String get nameAndAddressCannotBeEmpty;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

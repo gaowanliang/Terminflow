@@ -33,5 +33,6 @@
     "usePrivateKey": "使用私钥",
     "noHosts": "没有主机",
     "edit": "编辑",
-    "delete": "删除"
+    "delete": "删除",
+    "nameAndAddressCannotBeEmpty": "名称和地址不能为空"
 }

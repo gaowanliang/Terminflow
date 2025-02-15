@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:terminflow/core/database/database.dart';
 import 'package:terminflow/data/models/ssh_tab_entity.dart';
@@ -10,32 +11,50 @@ class SSHTabsNotifier extends StateNotifier<List<SSHTab>> {
           SSHTab(
             id: 'home',
             name: 'Home',
+            connectionState: ValueNotifier<int>(0),
             host: null, // 创建一个空的 HostInfo 对象
             terminal: const HostMainContent(),
+            isHidden: ValueNotifier<bool>(false),
           ),
         ]);
 
   void addTab(HostInfo host) {
-    // 检查是否已存在相同的连接
     final id = DateTime.now().toString();
-    final existingTab = state.firstWhere(
-      (tab) => tab.host?.id == host.id,
-      orElse: () => SSHTab(
-        id: id,
-        name: host.name,
-        host: host,
-        terminal: TerminalScreen(connection: host, connectId: id),
+    final ValueNotifier<int> connectionState = ValueNotifier<int>(0);
+    final ValueNotifier<bool> isHidden = ValueNotifier<bool>(false);
+    final newTab = SSHTab(
+      id: id,
+      name: host.name,
+      connectionState: connectionState,
+      host: host,
+      // 为终端添加 key
+      terminal: TerminalScreen(
+        key: ValueKey(id),
+        connection: host,
+        connectId: id,
+        connectionState: connectionState,
+        isHidden: isHidden,
       ),
+      isHidden: isHidden,
     );
-
-    if (!state.contains(existingTab)) {
-      state = [...state, existingTab];
-    }
+    state = [...state, newTab];
   }
 
   void removeTab(String tabId) {
     if (tabId != 'home' && state.length > 1) {
       state = state.where((tab) => tab.id != tabId).toList();
+    }
+  }
+
+  void hideTab(String tabId) {
+    if (tabId != 'home') {
+      state = state.map((tab) {
+        if (tab.id == tabId) {
+          tab.isHidden.value = true;
+          return tab.copyWith(terminal: null);
+        }
+        return tab;
+      }).toList();
     }
   }
 }

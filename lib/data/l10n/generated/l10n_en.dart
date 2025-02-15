@@ -111,4 +111,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get delete => 'Delete';
+
+  @override
+  String get nameAndAddressCannotBeEmpty => 'Name and address cannot be empty';
 }

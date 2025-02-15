@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
       // themeMode: ThemeMode.dark,
       themeMode: ThemeMode.dark,
       // 默认为英文
-      locale: const Locale('en'),
+      // locale: const Locale('en'),
       theme: m3LightThemeData(context),
       darkTheme: m3DarkThemeData(context),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
