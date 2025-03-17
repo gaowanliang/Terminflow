@@ -140,10 +140,10 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get syncWordsNotSet => 'Sync words not set';
+  String get syncWordsNotSet => '同步短语未设置';
 
   @override
-  String get syncWordsError => 'Sync words error';
+  String get syncWordsError => '同步短语错误';
 
   @override
   String get configAlreadyRestore => '配置已经恢复';
